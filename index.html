@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gia Đình Con Cháu Ông Bà Vinh</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="hero-wrapper">
+        <video autoplay muted loop playsinline class="video-bg">
+            <source src="./video/mainvideo.mp4" type="video/mp4">
+        </video>
+        <div class="video-overlay"></div>
+
+        <div class="hero-content">
+            <h1 class="main-title">Gia Đình<br>Con Cháu<br>Ông Bà Vinh</h1>
+            <p class="sub-title">Lưu giữ những khoảnh khắc quý giá, kết nối yêu thương qua từng thế hệ.</p>
+        </div>
+
+        <div class="scroll-hint" id="scrollHintBtn">
+            <span>Khám phá</span>
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </div>
+
+    <div class="events-header-container">
+        <h2 class="big-event-title">Sự Kiện</h2>
+        <div class="separator-line"></div>
+        <div class="nav-year"></div>
+    </div>
+
+    <div class="grid-events"></div>
+
+    <div id="scrollToTop" class="scroll-top-btn">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <div class="detail-view">
+        <button class="back-btn"><i class="fas fa-arrow-left"></i> Quay lại</button>
+
+        <header class="detail-hero">
+            <div class="hero-overlay"></div>
+            <div class="hero-text">
+                <h1 class="hero-title">Tiêu đề sự kiện</h1>
+                <p class="hero-desc">Mô tả ngắn...</p>
+            </div>
+        </header>
+
+        <section id="video-container" class="video-section"></section>
+        <section id="groups-container" class="group-section"></section>
+        <section id="gallery-container" class="gallery-section"></section>
+        
+        <footer class="footer">
+            &copy; 2026 Made By Luân.
+        </footer>
+    </div>
+
+    <div class="lightbox">
+        <span class="close-lb">&times;</span>
+        <img id="lb-img">
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
