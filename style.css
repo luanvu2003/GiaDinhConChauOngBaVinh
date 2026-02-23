@@ -4,16 +4,23 @@
 :root {
     --bg-color: #0a0a0a;
     --text-color: #e0e0e0;
-    --gold: #d4af37;        
-    --gold-dim: #8a6e2f;   
-    
-    --font-serif: 'Cormorant Garamond', serif; 
-    --font-sans: 'Montserrat', sans-serif;    
+    --gold: #d4af37;
+    --gold-dim: #8a6e2f;
+
+    --font-serif: 'Cormorant Garamond', serif;
+    --font-sans: 'Montserrat', sans-serif;
     --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
 
 body {
     background-color: var(--bg-color);
@@ -24,71 +31,175 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-color); }
-::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gold);
+}
 
 /* =========================================
    2. HERO SECTION
    ========================================= */
 .hero-wrapper {
     height: 100vh;
-    display: flex; flex-direction: column;
-    justify-content: center; align-items: center;
-    position: relative; overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
 }
 
 .video-bg {
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 100%;
-    object-fit: cover; z-index: -2;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
 }
 
 .video-overlay {
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.75); /* Đậm hơn để chữ rõ */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
     z-index: -1;
 }
 
 .hero-content {
-    text-align: center; z-index: 2; padding: 20px;
-    /* BỎ MIX-BLEND-MODE ĐỂ CHỮ RÕ NÉT */
+    text-align: center;
+    z-index: 2;
+    padding: 20px;
 }
 
+/* --- LỰA CHỌN 1: VÀNG HOÀNG GIA (SANG TRỌNG, ẤM CÚNG) --- */
 .main-title {
     font-family: var(--font-serif);
-    font-size: clamp(4rem, 10vw, 9rem);
-    font-style: italic; font-weight: 300;
-    line-height: 0.9; letter-spacing: -2px;
-    color: #fff; margin-bottom: 30px;
-    text-shadow: 4px 4px 20px rgba(0,0,0,0.9); /* Bóng chữ đậm */
+    font-size: clamp(3.5rem, 8vw, 7rem);
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.1;
+    text-align: center;
+    margin-bottom: 30px;
     
-    filter: blur(10px); opacity: 0;
-    animation: textFocus 1.5s var(--ease-out-expo) forwards 0.5s;
+    /* Tạo màu vàng kim loại óng ánh */
+    background: linear-gradient(
+        to right, 
+        #BF953F, 
+        #FCF6BA, 
+        #B38728, 
+        #FBF5B7, 
+        #AA771C
+    );
+    background-size: 200% auto;
+    
+    /* Cắt nền vào chữ */
+    color: #d4af37; /* Màu dự phòng */
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    /* Animation ánh sáng chạy qua */
+    animation: 
+        shineGold 5s linear infinite,
+        luxuryReveal 2.5s cubic-bezier(0.2, 1, 0.3, 1) forwards 0.5s;
+    
+    /* Bóng đổ đậm để nổi trên nền video */
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.8));
+    opacity: 0;
 }
 
+@keyframes shineGold {
+    to { background-position: 200% center; }
+}
+
+@keyframes luxuryReveal {
+    0% { opacity: 0; transform: translateY(40px); letter-spacing: -10px; filter: blur(15px) drop-shadow(0 5px 15px rgba(0,0,0,0.8)); }
+    100% { opacity: 1; transform: translateY(0); letter-spacing: 0px; filter: blur(0) drop-shadow(0 5px 15px rgba(0,0,0,0.8)); }
+}
+
+.main-title:hover {
+    color: #ffffff;
+    letter-spacing: 5px;
+    transition: all 1s ease;
+}
+
+/* TYPEWRITER SUB-TITLE */
 .sub-title {
     font-family: var(--font-sans);
-    color: rgba(255,255,255,0.9);
-    font-size: 0.9rem; letter-spacing: 4px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1rem;
+    letter-spacing: 3px;
     text-transform: uppercase;
-    opacity: 0; animation: fadeInUp 1s var(--ease-out-expo) forwards 1.2s;
+    font-weight: 400;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+    overflow: hidden;
+    white-space: nowrap;
+    margin: 20px auto 0;
+    width: 0;
+    border-right: 2px solid #fff;
+    animation: typing 4s steps(50, end) forwards 1.5s, blink-caret .75s step-end infinite;
+}
+
+@keyframes typing {
+    from {
+        width: 0
+    }
+
+    to {
+        width: 100%
+    }
+}
+
+@keyframes blink-caret {
+
+    from,
+    to {
+        border-color: transparent
+    }
+
+    50% {
+        border-color: #fff
+    }
 }
 
 .scroll-hint {
-    position: absolute; bottom: 50px;
-    display: flex; flex-direction: column;
-    align-items: center; color: rgba(255,255,255,0.6);
-    cursor: pointer; transition: color 0.3s;
-    animation: float 3s ease-in-out infinite; z-index: 5;
+    position: absolute;
+    bottom: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: color 0.3s;
+    animation: float 3s ease-in-out infinite;
+    z-index: 5;
 }
-.scroll-hint:hover { color: var(--gold); }
+
+.scroll-hint:hover {
+    color: var(--gold);
+}
+
 .scroll-hint span {
-    font-size: 0.65rem; letter-spacing: 3px;
-    text-transform: uppercase; margin-bottom: 10px;
+    font-size: 0.65rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
 }
 
 /* =========================================
@@ -103,325 +214,502 @@ body {
 .big-event-title {
     font-family: var(--font-serif);
     font-size: clamp(3rem, 7vw, 6rem);
-    font-weight: 300; font-style: italic;
-    color: var(--gold); margin-bottom: 10px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--gold);
+    margin-bottom: 10px;
     letter-spacing: -1px;
 }
 
 .separator-line {
-    width: 1px; height: 80px;
+    width: 1px;
+    height: 80px;
     background: linear-gradient(to bottom, var(--gold), transparent);
-    margin: 20px auto 50px; opacity: 0.5;
+    margin: 20px auto 50px;
+    opacity: 0.5;
 }
 
 .nav-year {
-    display: flex; justify-content: center;
-    gap: 20px; flex-wrap: wrap;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
 .year-btn {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #888; padding: 12px 40px;
-    font-size: 1.3rem; font-family: var(--font-serif);
-    font-style: italic; cursor: pointer;
+    color: #888;
+    padding: 12px 40px;
+    font-size: 1.3rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    cursor: pointer;
     transition: all 0.5s var(--ease-out-expo);
-    backdrop-filter: blur(5px); border-radius: 2px;
+    backdrop-filter: blur(5px);
+    border-radius: 2px;
 }
-.year-btn:hover, .year-btn.active {
-    border-color: var(--gold); color: var(--gold);
-    background: rgba(212, 175, 55, 0.05); transform: scale(1.05);
+
+.year-btn:hover,
+.year-btn.active {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(212, 175, 55, 0.05);
+    transform: scale(1.05);
 }
 
 /* =========================================
-   4. GRID LAYOUT
+   4. GRID LAYOUT (KHÔNG LẶP - CÓ AUTO ANIMATION)
    ========================================= */
 .grid-events {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 60px; padding: 0 8% 150px;
-    opacity: 0; transform: translateY(50px);
+    gap: 60px;
+    padding: 0 8% 150px;
+    opacity: 0;
+    transform: translateY(50px);
     transition: all 1s var(--ease-out-expo);
 }
-.grid-events.active { opacity: 1; transform: translateY(0); }
+
+.grid-events.active {
+    opacity: 1;
+    transform: translateY(0);
+}
 
 .card {
-    position: relative; height: 500px;
-    overflow: hidden; cursor: pointer; border-radius: 2px;
+    position: relative;
+    height: 500px;
+    overflow: hidden;
+    cursor: pointer;
+    border-radius: 2px;
     transition: all 0.6s var(--ease-out-expo);
-    opacity: 0; transform: translateY(40px);
+    opacity: 0;
+    transform: translateY(40px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
 }
-.card.show { opacity: 1; transform: translateY(0); }
-.card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+
+.card.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.card:hover {
+    transform: translateY(-10px);
+}
 
 .card img {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: transform 1.5s var(--ease-out-expo), filter 0.5s;
-    filter: grayscale(30%);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* TỰ ĐỘNG CHẠY HIỆU ỨNG ZOOM MÀ KHÔNG CẦN HOVER */
+    animation: autoZoom 10s ease-in-out infinite alternate;
 }
-.card:hover img { transform: scale(1.1); filter: grayscale(0%); }
 
 .card-content {
-    position: absolute; bottom: 0; left: 0; width: 100%;
-    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95), transparent);
     padding: 60px 30px 30px;
-    transform: translateY(20px); opacity: 0.8;
-    transition: all 0.5s var(--ease-out-expo);
 }
-.card:hover .card-content { transform: translateY(0); opacity: 1; }
 
 .card-title {
-    font-family: var(--font-serif); font-size: 2.2rem;
-    line-height: 1.1; color: #fff; margin-bottom: 8px;
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 8px;
 }
+
 .card-date {
-    font-family: var(--font-sans); color: var(--gold);
-    font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;
+    font-family: var(--font-sans);
+    color: var(--gold);
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Hiệu ứng Zoom Tự động */
+@keyframes autoZoom {
+    0% {
+        transform: scale(1);
+        filter: grayscale(30%);
+    }
+
+    100% {
+        transform: scale(1.15);
+        filter: grayscale(0%);
+    }
 }
 
 /* =========================================
    5. DETAIL VIEW
    ========================================= */
 .detail-view {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: #050505; z-index: 1000;
-    overflow-y: auto; display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #050505;
+    z-index: 1000;
+    overflow-y: auto;
+    display: none;
     animation: fadeIn 0.6s ease;
 }
 
-/* --- SỬA LẠI NÚT QUAY LẠI --- */
 .back-btn {
-    position: absolute; /* <--- QUAN TRỌNG: Đổi từ fixed thành absolute */
-    top: 40px; 
-    left: 40px; 
+    position: absolute;
+    top: 40px;
+    left: 40px;
     z-index: 2000;
-    
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #fff; padding: 12px 30px;
-    border-radius: 50px; cursor: pointer;
+    color: #fff;
+    padding: 12px 30px;
+    border-radius: 50px;
+    cursor: pointer;
     backdrop-filter: blur(10px);
     transition: 0.4s;
-    font-family: var(--font-sans); text-transform: uppercase;
-    font-size: 0.75rem; letter-spacing: 2px;
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
 }
 
 .back-btn:hover {
-    background: #fff; color: #000; border-color: #fff;
+    background: #fff;
+    color: #000;
+    border-color: #fff;
 }
 
 .detail-hero {
-    height: 70vh; position: relative;
-    background-size: cover; background-position: center;
-    display: flex; align-items: flex-end; justify-content: center;
+    height: 70vh;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
     padding-bottom: 80px;
 }
+
 .detail-hero::after {
-    content: ''; position: absolute; inset: 0;
+    content: '';
+    position: absolute;
+    inset: 0;
     background: linear-gradient(to bottom, transparent 0%, #050505 100%);
 }
 
 .hero-text {
-    position: relative; z-index: 2; text-align: center; padding: 0 20px;
-    animation: fadeInUp 1s var(--ease-out-expo) 0.3s forwards; opacity: 0;
-}
-.hero-title {
-    font-family: var(--font-serif); font-size: clamp(3.5rem, 8vw, 6rem);
-    font-style: italic; color: #fff; margin-bottom: 15px;
-    text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 20px;
+    animation: fadeInUp 1s var(--ease-out-expo) 0.3s forwards;
+    opacity: 0;
 }
 
-.video-section, .group-section, .gallery-section {
-    max-width: 1300px; margin: 0 auto; padding: 60px 30px;
+.hero-title {
+    font-family: var(--font-serif);
+    font-size: clamp(3.5rem, 8vw, 6rem);
+    font-style: italic;
+    color: #fff;
+    margin-bottom: 15px;
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.video-section,
+.group-section,
+.gallery-section {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 60px 30px;
 }
 
 .video-frame {
-    position: relative; padding-bottom: 56.25%; height: 0;
-    border: 1px solid #222; box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-    margin-top: -100px; z-index: 10; background: #000;
-    border-radius: 4px; overflow: hidden;
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    border: 1px solid #222;
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+    margin-top: -100px;
+    z-index: 10;
+    background: #000;
+    border-radius: 4px;
+    overflow: hidden;
 }
-.video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+.video-frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
 
 .group-name {
-    font-family: var(--font-serif); font-style: italic;
-    font-size: 2.5rem; color: #fff; margin-bottom: 30px;
-    display: flex; align-items: center; gap: 20px;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 2.5rem;
+    color: #fff;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
+
 .group-name::after {
-    content: ''; flex-grow: 1; height: 1px; background: rgba(255,255,255,0.1);
+    content: '';
+    flex-grow: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .group-scroll {
-    display: flex; gap: 30px; overflow-x: auto; padding-bottom: 30px;
+    display: flex;
+    gap: 30px;
+    overflow-x: auto;
+    padding-bottom: 30px;
 }
-.group-scroll img {
-    height: 400px; width: auto; border-radius: 2px;
-    cursor: zoom-in; transition: all 0.5s; filter: brightness(0.8);
-}
-.group-scroll img:hover { filter: brightness(1); transform: scale(1.02); }
 
-.gallery-section { columns: 3; column-gap: 30px; }
-.gallery-item { margin-bottom: 30px; break-inside: avoid; }
+.group-scroll img {
+    height: 400px;
+    width: auto;
+    border-radius: 2px;
+    cursor: zoom-in;
+    transition: all 0.5s;
+    filter: brightness(0.8);
+}
+
+.group-scroll img:hover {
+    filter: brightness(1);
+    transform: scale(1.02);
+}
+
+.gallery-section {
+    columns: 3;
+    column-gap: 30px;
+}
+
+.gallery-item {
+    margin-bottom: 30px;
+    break-inside: avoid;
+}
+
 .gallery-item img {
-    width: 100%; border-radius: 2px; cursor: zoom-in;
+    width: 100%;
+    border-radius: 2px;
+    cursor: zoom-in;
     transition: transform 0.5s;
 }
-.gallery-item img:hover { transform: scale(1.03); }
+
+.gallery-item img:hover {
+    transform: scale(1.03);
+}
 
 .footer {
-    text-align: center; padding: 60px; border-top: 1px solid #111;
-    color: #444; font-family: var(--font-serif); font-style: italic; font-size: 1.2rem;
+    text-align: center;
+    padding: 60px;
+    border-top: 1px solid #111;
+    color: #444;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.2rem;
 }
 
-/* =========================================
-   6. UI ELEMENTS
-   ========================================= */
-/* Scroll Top Button - Cải tiến */
 .scroll-top-btn {
-    position: fixed; bottom: 40px; right: 40px;
-    width: 50px; height: 50px;
-    background: rgba(0, 0, 0, 0.8); /* Nền đen mờ */
+    position: fixed;
+    bottom: 40px;
+    right: 40px;
+    width: 50px;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.8);
     border: 2px solid var(--gold);
-    color: var(--gold); border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    cursor: pointer; z-index: 9999;
-    opacity: 0; visibility: hidden;
-    transform: translateY(20px); transition: all 0.4s ease;
+    color: var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.4s ease;
     box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
 }
-.scroll-top-btn.show { opacity: 1; visibility: visible; transform: translateY(0); }
+
+.scroll-top-btn.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
 .scroll-top-btn:hover {
-    background: var(--gold); color: #000;
+    background: var(--gold);
+    color: #000;
     transform: scale(1.1) translateY(0);
 }
 
-/* Lightbox */
 .lightbox {
-    display: none; position: fixed; inset: 0;
-    background: rgba(0, 0, 0, 0.98); z-index: 5000;
-    justify-content: center; align-items: center;
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.98);
+    z-index: 5000;
+    justify-content: center;
+    align-items: center;
 }
-.lightbox img {
-    max-width: 90vw; max-height: 90vh;
-    box-shadow: 0 0 100px rgba(0,0,0,0.8); border: 1px solid #333;
-}
-.close-lb {
-    position: absolute; top: 30px; right: 40px;
-    color: #fff; font-size: 2rem; cursor: pointer; transition: 0.3s;
-}
-.close-lb:hover { color: var(--gold); transform: rotate(90deg); }
 
-/* Animation Keyframes */
-@keyframes textFocus {
-    0% { filter: blur(12px); opacity: 0; transform: translateY(20px); }
-    100% { filter: blur(0px); opacity: 1; transform: translateY(0); }
+.lightbox img {
+    max-width: 90vw;
+    max-height: 90vh;
+    border: 1px solid #333;
 }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-@keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.close-lb {
+    position: absolute;
+    top: 30px;
+    right: 40px;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.close-lb:hover {
+    color: var(--gold);
+    transform: rotate(90deg);
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
 
 @media (max-width: 768px) {
-    .gallery-section { columns: 1; }
-    .group-scroll img { height: 280px; }
-    .nav-year { gap: 10px; }
-    .year-btn { font-size: 1rem; padding: 10px 25px; }
-    .main-title { font-size: 3.5rem; }
-    .hero-wrapper { padding: 0 15px; }
-    .video-frame { margin-top: -50px; }
+    .gallery-section {
+        columns: 1;
+    }
+
+    .group-scroll img {
+        height: 280px;
+    }
+
+    .nav-year {
+        gap: 10px;
+    }
+
+    .year-btn {
+        font-size: 1rem;
+        padding: 10px 25px;
+    }
+
+    .main-title {
+        font-size: 3.5rem;
+    }
+
+    .sub-title {
+        white-space: normal;
+        border-right: none;
+        width: auto;
+        opacity: 0;
+        animation: fadeInUp 1s forwards 1.5s;
+    }
 }
 
-/* =========================================
-   7. RESPONSIVE LANDSCAPE (XOAY NGANG)
-   ========================================= */
-
 @media only screen and (max-width: 932px) and (orientation: landscape) {
-    
-    /* 1. HERO SECTION: Giảm chiều cao để vừa màn hình */
     .hero-wrapper {
-        height: auto;          /* Để chiều cao tự động co giãn */
-        min-height: 100vh;     /* Ít nhất bằng màn hình */
-        padding: 40px 20px;    /* Thêm đệm để không sát lề */
-        justify-content: flex-start; /* Đẩy nội dung lên trên */
+        height: auto;
+        min-height: 100vh;
+        padding: 40px 20px;
+        justify-content: flex-start;
     }
 
     .hero-content {
-        margin-top: 40px;      /* Cách đỉnh một chút */
+        margin-top: 40px;
         padding: 10px;
     }
 
-    /* Giảm size chữ tiêu đề chính để không chiếm hết màn hình */
     .main-title {
-        font-size: 3.5rem;     /* Size cố định nhỏ hơn */
+        font-size: 3.5rem;
         margin-bottom: 10px;
-        -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.5); /* Viền mỏng lại */
     }
 
     .sub-title {
         font-size: 0.8rem;
-        max-width: 90%;        /* Cho phép chữ dàn ngang nhiều hơn */
+        max-width: 90%;
         margin-top: 10px;
     }
 
-    /* Ẩn nút gợi ý cuộn vì không gian quá hẹp */
     .scroll-hint {
         display: none;
     }
 
-    /* 2. SỰ KIỆN & MENU */
     .events-header-container {
-        padding: 60px 20px 40px; /* Giảm khoảng cách trên dưới */
+        padding: 60px 20px 40px;
     }
 
-    .big-event-title {
-        font-size: 3rem;       /* Giảm size chữ sự kiện */
-    }
-
-    .year-btn {
-        padding: 8px 25px;     /* Nút năm nhỏ lại chút */
-        font-size: 1rem;
-    }
-
-    /* 3. LƯỚI ẢNH (GRID): Chuyển thành 2 cột hoặc 3 cột */
     .grid-events {
-        grid-template-columns: repeat(2, 1fr); /* 2 cột cho dễ nhìn */
+        grid-template-columns: repeat(2, 1fr);
         gap: 30px;
         padding: 0 20px 80px;
     }
 
     .card {
-        height: 350px;         /* Giảm chiều cao thẻ ảnh */
-    }
-    
-    .card-title {
-        font-size: 1.5rem;     /* Giảm tên sự kiện trong thẻ */
+        height: 350px;
     }
 
-    /* 4. TRANG CHI TIẾT (DETAIL VIEW) */
     .detail-hero {
-        height: 100vh;          /* Header chi tiết full màn hình */
+        height: 100vh;
         padding-bottom: 40px;
     }
 
     .hero-title {
-        font-size: 3rem;       /* Giảm tiêu đề trang chi tiết */
+        font-size: 3rem;
     }
 
     .back-btn {
-        top: 20px; left: 20px; /* Đẩy nút back lên gọn gàng */
+        top: 20px;
+        left: 20px;
         padding: 8px 20px;
     }
 
-    /* 5. CÁC THÀNH PHẦN KHÁC */
     .video-frame {
-        margin-top: -30px;     /* Giảm độ đè lên header */
+        margin-top: -30px;
     }
-    
+
     .group-scroll img {
-        height: 220px;         /* Ảnh gia đình nhỏ lại để dễ lướt ngang */
-    }
-    
-    .footer {
-        padding: 30px;
+        height: 220px;
     }
 }

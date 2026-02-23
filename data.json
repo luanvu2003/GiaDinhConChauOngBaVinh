@@ -74,5 +74,157 @@
         ]
       }
     ]
+  },
+  {
+    "year": 2025,
+    "events": [
+      {
+        "id": "tet-2025",
+        "title": "Hội Xuân 2025",
+        "date": "17/02/2025 - 21/02/2025",
+        "cover": "./images/2026/Xuan/anhgiadinh2026tet.jpg",
+        "description": "Mùa xuân năm nay thật đặc biệt, lần đầu tiên sau nhiều năm đại gia đình có mặt đông đủ. Cùng nhau gói bánh chưng và đón giao thừa ấm áp.",
+        "videoId": "hjYOanJelUs",
+        "groups": [
+          {
+            "name": "Gia đình Ông Bà",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/GDNhaBaNgoai.jpg"
+            ]
+          },
+          {
+            "name": "Gia Đình Bác Quang",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/GdinhBacQuang.jpg"
+            ]
+          },
+          {
+            "name": "Gia Đình Bác Hòa",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/Gdbachoa.jpg",
+                "./images/2026/Xuan/anhgiadinh/Hang.jpg"
+            ]
+          },
+          {
+            "name": "Gia Đình Bác Hợp",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/GDBacHop.jpg",
+                "./images/2026/Xuan/anhgiadinh/ChiHai.jpg"
+            ]
+          },
+          {
+            "name": "Gia Đình Bác Thọ",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/GDBacTho.jpg"
+            ]
+          },
+          {
+            "name": "Gia Đình Bác Thông",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/GiaDinhBacThong.JPG"
+            ]
+          },
+          {
+            "name": "Gia Đình Dì Nga",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/gddinga.jpg"
+            ]
+          },
+          {
+            "name": "Gia Đình Cậu Thắng",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/GdcauThang.jpg"
+            ]
+          },
+          {
+            "name": "Gia Đình Cậu Thành Út",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/GdCauUt.jpg"
+            ]
+          }
+        ],
+        "general_photos": [
+          "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=800&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=800&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=800&auto=format&fit=crop"
+        ]
+      }
+    ]
+  },
+  {
+    "year": 2024,
+    "events": [
+      {
+        "id": "tet-2024",
+        "title": "Hội Xuân 2024",
+        "date": "17/02/2024 - 21/02/2024",
+        "cover": "./images/2026/Xuan/anhgiadinh2026tet.jpg",
+        "description": "Mùa xuân năm nay thật đặc biệt, lần đầu tiên sau nhiều năm đại gia đình có mặt đông đủ. Cùng nhau gói bánh chưng và đón giao thừa ấm áp.",
+        "videoId": "hjYOanJelUs",
+        "groups": [
+          {
+            "name": "Gia đình Ông Bà",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/GDNhaBaNgoai.jpg"
+            ]
+          },
+          {
+            "name": "Gia Đình Bác Quang",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/GdinhBacQuang.jpg"
+            ]
+          },
+          {
+            "name": "Gia Đình Bác Hòa",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/Gdbachoa.jpg",
+                "./images/2026/Xuan/anhgiadinh/Hang.jpg"
+            ]
+          },
+          {
+            "name": "Gia Đình Bác Hợp",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/GDBacHop.jpg",
+                "./images/2026/Xuan/anhgiadinh/ChiHai.jpg"
+            ]
+          },
+          {
+            "name": "Gia Đình Bác Thọ",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/GDBacTho.jpg"
+            ]
+          },
+          {
+            "name": "Gia Đình Bác Thông",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/GiaDinhBacThong.JPG"
+            ]
+          },
+          {
+            "name": "Gia Đình Dì Nga",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/gddinga.jpg"
+            ]
+          },
+          {
+            "name": "Gia Đình Cậu Thắng",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/GdcauThang.jpg"
+            ]
+          },
+          {
+            "name": "Gia Đình Cậu Thành Út",
+            "photos": [
+              "./images/2026/Xuan/anhgiadinh/GdCauUt.jpg"
+            ]
+          }
+        ],
+        "general_photos": [
+          "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=800&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1513151233558-d860c5398176?q=80&w=800&auto=format&fit=crop",
+          "https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=800&auto=format&fit=crop"
+        ]
+      }
+    ]
   }
 ]

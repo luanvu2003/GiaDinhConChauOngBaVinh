@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const groupsContainer = document.querySelector('#groups-container');
     const galleryContainer = document.querySelector('#gallery-container');
 
-    // Lightbox Elements
+    // Lightbox
     const lightbox = document.querySelector('.lightbox');
     const lbImg = document.querySelector('#lb-img');
     const closeLb = document.querySelector('.close-lb');
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(err => {
             console.error("Lỗi đọc data.json:", err);
-            eventsGrid.innerHTML = '<p style="color:white; text-align:center;">Vui lòng chạy bằng Live Server để đọc được data.</p>';
+            eventsGrid.innerHTML = '<p style="color:white; text-align:center;">Vui lòng chạy bằng Live Server.</p>';
         });
 
     function initMenu() {
@@ -61,17 +61,20 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // --- HÀM RENDER GRID (KHÔNG LẶP) ---
     function renderGrid(year) {
         eventsGrid.innerHTML = '';
         const yearData = allData.find(d => d.year === year);
         
-        if(yearData) {
+        if(yearData && yearData.events.length > 0) {
             yearData.events.forEach((event, index) => {
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.style.transitionDelay = `${index * 0.1}s`;
+                // Hiệu ứng xuất hiện so le
+                card.style.transitionDelay = `${index * 0.15}s`;
 
                 card.onclick = () => openDetail(event);
+
                 card.innerHTML = `
                     <img src="${event.cover}" loading="lazy">
                     <div class="card-content">
@@ -80,6 +83,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 `;
                 eventsGrid.appendChild(card);
+                
+                // Kích hoạt hiện thẻ
                 setTimeout(() => card.classList.add('show'), 50);
             });
         }
@@ -135,18 +140,16 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.style.overflow = 'hidden';
     }
 
-    // --- LOGIC SCROLL TOP THÔNG MINH ---
+    // --- LOGIC SCROLL TOP ---
     function toggleScrollBtn(position) {
         if (position > 500) scrollTopBtn.classList.add('show');
         else scrollTopBtn.classList.remove('show');
     }
 
-    // Scroll trang chủ
     window.addEventListener('scroll', () => {
         if(detailView.style.display !== 'block') toggleScrollBtn(window.scrollY);
     });
 
-    // Scroll trang detail
     detailView.addEventListener('scroll', () => {
         if(detailView.style.display === 'block') toggleScrollBtn(detailView.scrollTop);
     });
