@@ -140,6 +140,10 @@
                     <div id="uploadPreviewGrid" class="upload-preview-grid"></div>
                 </div>
 
+                <div class="mobile-wake-tip">
+                    <i class="fas fa-bolt"></i> <span>Ảnh được nén tối ưu siêu nhanh (~3–5s). Màn hình sẽ tự động giữ sáng trong lúc tải.</span>
+                </div>
+
                 <div id="uploadAlert" class="alert-box" style="display: none;"></div>
 
                 <div id="uploadProgressBox" class="progress-box" style="display: none;">
@@ -264,6 +268,24 @@
                 <button type="button" id="btnClearToken" class="btn-danger-outline"><i class="fas fa-trash"></i> Xóa Token</button>
                 <button type="button" id="btnSaveToken" class="btn-primary"><i class="fas fa-save"></i> Lưu Token</button>
             </div>
+        </div>
+    </div>
+
+    <!-- WIDGET THEO DÕI TIẾN TRÌNH DEPLOY -->
+    <div id="deployTrackerWidget" class="deploy-tracker-widget">
+        <div class="deploy-tracker-header">
+            <div class="deploy-tracker-status-icon">
+                <i class="fas fa-spinner fa-spin" id="deploySpinner"></i>
+                <i class="fas fa-circle-check" id="deployCheck" style="display:none;"></i>
+            </div>
+            <div class="deploy-tracker-info">
+                <h4 id="deployStatusTitle">Đang xuất bản lên GitHub Pages...</h4>
+                <p id="deployStatusDesc">Đang gửi bản cập nhật mới nhất cho cả nhà</p>
+            </div>
+            <button type="button" id="btnMinimizeDeployTracker" class="btn-minimize-tracker" title="Đóng thông báo">&times;</button>
+        </div>
+        <div class="deploy-progress-container">
+            <div id="deployProgressBarFill" class="deploy-progress-fill"></div>
         </div>
     </div>
 

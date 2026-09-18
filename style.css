@@ -1472,3 +1472,317 @@ textarea.form-control {
         left: 15px;
     }
 }
+
+/* =========================================
+   11. DEPLOY TRACKER WIDGET & MOBILE WAKE TIP
+   ========================================= */
+
+.mobile-wake-tip {
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px dashed rgba(212, 175, 55, 0.35);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.78rem;
+    color: #e5d29b;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    line-height: 1.4;
+}
+
+.mobile-wake-tip i {
+    color: var(--gold);
+    font-size: 0.9rem;
+}
+
+/* Deploy Tracker Widget */
+.deploy-tracker-widget {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 99999;
+    background: rgba(18, 18, 18, 0.94);
+    border: 1px solid rgba(212, 175, 55, 0.45);
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.85), 0 0 25px rgba(212, 175, 55, 0.2);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    width: 360px;
+    max-width: calc(100vw - 40px);
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    animation: trackerSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.deploy-tracker-widget.active {
+    display: flex;
+}
+
+.deploy-tracker-widget.success {
+    border-color: #52c41a;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.85), 0 0 25px rgba(82, 196, 26, 0.25);
+}
+
+@keyframes trackerSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.deploy-tracker-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.deploy-tracker-status-icon {
+    font-size: 1.3rem;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+}
+
+.deploy-tracker-widget.success .deploy-tracker-status-icon {
+    color: #52c41a;
+}
+
+.deploy-tracker-info {
+    flex: 1;
+}
+
+.deploy-tracker-info h4 {
+    font-family: var(--font-sans);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 3px 0;
+}
+
+.deploy-tracker-info p {
+    font-size: 0.75rem;
+    color: #aaa;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.btn-minimize-tracker {
+    background: transparent;
+    border: none;
+    color: #777;
+    font-size: 1.3rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+    transition: color 0.2s;
+}
+
+.btn-minimize-tracker:hover {
+    color: #fff;
+}
+
+.deploy-progress-container {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.deploy-progress-fill {
+    height: 100%;
+    width: 30%;
+    background: linear-gradient(90deg, #d4af37, #ffe082, #d4af37);
+    background-size: 200% 100%;
+    border-radius: 10px;
+    animation: progressMoving 2s linear infinite;
+    transition: width 0.4s ease;
+}
+
+.deploy-tracker-widget.success .deploy-progress-fill {
+    background: #52c41a;
+    animation: none;
+    width: 100% !important;
+}
+
+@keyframes progressMoving {
+    0% { background-position: 100% 0; }
+    100% { background-position: -100% 0; }
+}
+
+/* =========================================
+   12. HỆ THỐNG RESPONSIVE ĐA ĐỘ PHÂN GIẢI
+   ========================================= */
+
+/* 1. Màn hình điện thoại siêu nhỏ (<= 380px) */
+@media screen and (max-width: 380px) {
+    .main-title {
+        font-size: 2.8rem;
+    }
+
+    .sub-title {
+        font-size: 0.72rem;
+        letter-spacing: 1.5px;
+    }
+
+    .nav-year {
+        gap: 8px;
+    }
+
+    .year-btn {
+        padding: 8px 20px;
+        font-size: 1.05rem;
+    }
+
+    .admin-toolbar {
+        gap: 6px;
+    }
+
+    .admin-btn {
+        padding: 7px 11px;
+        font-size: 0.74rem;
+    }
+
+    .detail-upload-btn, .back-btn {
+        top: 15px;
+        padding: 6px 14px;
+        font-size: 0.65rem;
+        letter-spacing: 1px;
+    }
+
+    .detail-upload-btn {
+        right: 15px;
+    }
+
+    .back-btn {
+        left: 15px;
+    }
+
+    .admin-modal-card {
+        padding: 12px;
+    }
+
+    .upload-dropzone {
+        padding: 20px 10px;
+    }
+
+    .upload-preview-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+    }
+}
+
+/* 2. Màn hình điện thoại tiêu chuẩn (381px - 576px) */
+@media screen and (max-width: 576px) {
+    .events-header-container {
+        padding: 80px 15px 40px;
+    }
+
+    .big-event-title {
+        font-size: 3rem;
+    }
+
+    .separator-line {
+        height: 50px;
+        margin: 15px auto 30px;
+    }
+
+    .grid-events {
+        grid-template-columns: 1fr;
+        padding: 0 16px 60px;
+        gap: 24px;
+    }
+
+    .card {
+        height: 380px;
+    }
+
+    .detail-hero {
+        height: 60vh;
+        min-height: 400px;
+    }
+
+    .hero-title {
+        font-size: 2.4rem;
+    }
+
+    .hero-desc {
+        font-size: 0.88rem;
+    }
+
+    .gallery-section, .group-section {
+        padding: 40px 15px;
+    }
+
+    .gallery-item {
+        margin-bottom: 15px;
+    }
+
+    .group-scroll img {
+        height: 180px;
+    }
+
+    .deploy-tracker-widget {
+        bottom: 15px;
+        right: 15px;
+        left: 15px;
+        width: auto;
+    }
+
+    .target-options {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 3. Màn hình Tablet & iPad (577px - 992px) */
+@media screen and (min-width: 577px) and (max-width: 992px) {
+    .grid-events {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 28px;
+        padding: 0 25px 70px;
+    }
+
+    .card {
+        height: 400px;
+    }
+
+    .admin-toolbar {
+        gap: 12px;
+    }
+
+    .group-scroll img {
+        height: 220px;
+    }
+
+    .deploy-tracker-widget {
+        bottom: 20px;
+        right: 20px;
+        width: 380px;
+    }
+}
+
+/* 4. Màn hình máy tính lớn (1200px+) */
+@media screen and (min-width: 1200px) {
+    .grid-events {
+        max-width: 1300px;
+        margin: 0 auto;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 36px;
+    }
+
+    .admin-modal-card {
+        max-width: 620px;
+    }
+
+    .admin-modal-card.small-modal {
+        max-width: 440px;
+    }
+}

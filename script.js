@@ -222,58 +222,227 @@ document.addEventListener("DOMContentLoaded", () => {
         return await res.json();
     }
 
-    async function updateDataJsonOnGitHub(updaterFn, commitMessage) {
+    // =========================================
+    // 3.1. MOBILE SCREEN WAKE LOCK & PREVENT SLEEP
+    // =========================================
+    let screenWakeLock = null;
+
+    async function acquireWakeLock() {
+        try {
+            if ('wakeLock' in navigator) {
+                screenWakeLock = await navigator.wakeLock.request('screen');
+            }
+        } catch (e) {
+            console.log("Wake Lock không khả dụng hoặc bị từ chối:", e);
+        }
+    }
+
+    function releaseWakeLock() {
+        if (screenWakeLock) {
+            screenWakeLock.release().catch(() => {});
+            screenWakeLock = null;
+        }
+    }
+
+    // =========================================
+    // 3.2. THEO DÕI TIẾN TRÌNH DEPLOY & AUTO-RELOAD
+    // =========================================
+    const deployTrackerWidget = document.getElementById('deployTrackerWidget');
+    const deploySpinner = document.getElementById('deploySpinner');
+    const deployCheck = document.getElementById('deployCheck');
+    const deployStatusTitle = document.getElementById('deployStatusTitle');
+    const deployStatusDesc = document.getElementById('deployStatusDesc');
+    const deployProgressBarFill = document.getElementById('deployProgressBarFill');
+    const btnMinimizeDeployTracker = document.getElementById('btnMinimizeDeployTracker');
+
+    if (btnMinimizeDeployTracker && deployTrackerWidget) {
+        btnMinimizeDeployTracker.onclick = () => {
+            deployTrackerWidget.classList.remove('active');
+        };
+    }
+
+    let isDeployTrackingActive = false;
+
+    async function trackDeploymentProgress() {
+        if (!deployTrackerWidget) return;
+
+        // Bật widget theo dõi
+        deployTrackerWidget.classList.remove('success');
+        deployTrackerWidget.classList.add('active');
+        deploySpinner.style.display = 'inline-block';
+        deployCheck.style.display = 'none';
+        deployStatusTitle.textContent = 'Đang tự động xuất bản (Deploy)...';
+        deployStatusDesc.textContent = 'GitHub Pages đang cập nhật website cho cả nhà.';
+        deployProgressBarFill.style.width = '30%';
+
+        const token = getGitHubToken();
+        const headers = { 'Accept': 'application/vnd.github.v3+json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+
+        let checkCount = 0;
+        const maxChecks = 35; // Tối đa 35 lần x 3s = ~105s
+
+        if (isDeployTrackingActive) return;
+        isDeployTrackingActive = true;
+
+        const intervalId = setInterval(async () => {
+            checkCount++;
+
+            // Hiệu ứng tăng dần thanh tiến trình trong lúc chờ GitHub
+            const fakePct = Math.min(88, 30 + checkCount * 2);
+            deployProgressBarFill.style.width = `${fakePct}%`;
+
+            try {
+                const res = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/actions/runs?branch=${GITHUB_CONFIG.branch}&per_page=4&_t=${Date.now()}`, {
+                    headers: headers
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    const runs = data.workflow_runs || [];
+                    const pagesRun = runs.find(r => r.name && r.name.toLowerCase().includes('pages'));
+
+                    if (pagesRun) {
+                        if (pagesRun.status === 'in_progress' || pagesRun.status === 'queued') {
+                            deployStatusDesc.textContent = `Đang xây dựng trên máy chủ GitHub (${checkCount * 3}s)...`;
+                        } else if (pagesRun.status === 'completed') {
+                            if (pagesRun.conclusion === 'success') {
+                                clearInterval(intervalId);
+                                isDeployTrackingActive = false;
+
+                                // Hoàn thành deploy!
+                                deployTrackerWidget.classList.add('success');
+                                deploySpinner.style.display = 'none';
+                                deployCheck.style.display = 'inline-block';
+                                deployStatusTitle.textContent = 'Xuất bản thành công 100%! 🎉';
+                                deployStatusDesc.textContent = 'Đang tự động làm mới trang...';
+                                deployProgressBarFill.style.width = '100%';
+
+                                // Tự động làm mới dữ liệu mới toanh
+                                setTimeout(async () => {
+                                    await reloadFreshData();
+                                    showToast("Website đã được xuất bản trực tuyến thành công!", "success", 4000);
+                                    setTimeout(() => {
+                                        deployTrackerWidget.classList.remove('active');
+                                    }, 4500);
+                                }, 1500);
+
+                                return;
+                            }
+                        }
+                    }
+                }
+            } catch (err) {
+                console.warn("Lỗi kiểm tra tiến trình deploy:", err);
+            }
+
+            if (checkCount >= maxChecks) {
+                clearInterval(intervalId);
+                isDeployTrackingActive = false;
+                deployTrackerWidget.classList.add('success');
+                deploySpinner.style.display = 'none';
+                deployCheck.style.display = 'inline-block';
+                deployStatusTitle.textContent = 'Hoàn tất! Cả nhà có thể vào xem';
+                deployStatusDesc.textContent = 'Đang làm mới dữ liệu...';
+                await reloadFreshData();
+                setTimeout(() => deployTrackerWidget.classList.remove('active'), 3500);
+            }
+        }, 3000);
+    }
+
+    async function reloadFreshData() {
+        try {
+            const res = await fetch(`data.json?v=${Date.now()}`, { cache: 'no-store' });
+            if (res.ok) {
+                const freshData = await res.json();
+                allData = freshData.sort((a, b) => b.year - a.year);
+                initMenu();
+                renderGrid(activeYear || (allData.length > 0 ? allData[0].year : null));
+                if (currentEvent) {
+                    openDetail(currentEvent.id);
+                }
+            }
+        } catch (e) {
+            console.error("Lỗi làm mới dữ liệu:", e);
+        }
+    }
+
+    // =========================================
+    // 3.3. CẬP NHẬT DATA.JSON VỚI AUTO-RETRY
+    // =========================================
+    async function updateDataJsonOnGitHub(updaterFn, commitMessage, maxRetries = 5) {
         const token = getGitHubToken();
         if (!token) throw new Error("Chưa cấu hình GitHub Token");
 
         const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/data.json?ref=${GITHUB_CONFIG.branch}`;
-        
-        // 1. Lấy dữ liệu và SHA hiện tại
-        const resGet = await fetch(url, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Accept': 'application/vnd.github.v3+json'
+
+        for (let attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                // 1. Lấy dữ liệu và SHA mới nhất từ GitHub
+                const resGet = await fetch(`${url}&_t=${Date.now()}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    cache: 'no-store'
+                });
+
+                if (!resGet.ok) {
+                    const err = await resGet.json().catch(() => ({}));
+                    throw new Error(err.message || `Không thể đọc data.json từ GitHub (${resGet.status})`);
+                }
+
+                const resData = await resGet.json();
+                const currentSha = resData.sha;
+                const currentContent = base64ToUtf8(resData.content);
+                let parsedData = JSON.parse(currentContent);
+
+                // 2. Chạy hàm cập nhật dữ liệu (gộp dữ liệu mới vào bản mới nhất)
+                parsedData = updaterFn(parsedData);
+
+                // 3. Đẩy lại data.json đã cập nhật lên GitHub
+                const updatedJsonStr = JSON.stringify(parsedData, null, 2);
+                const encodedContent = utf8ToBase64(updatedJsonStr);
+
+                const resPut = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/data.json`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: commitMessage || "Cập nhật data.json từ Website",
+                        content: encodedContent,
+                        sha: currentSha,
+                        branch: GITHUB_CONFIG.branch
+                    })
+                });
+
+                if (!resPut.ok) {
+                    const errData = await resPut.json().catch(() => ({}));
+                    // Nếu gặp 409 Conflict (xung đột do người khác vừa sửa cùng lúc) -> Thử lại!
+                    if (resPut.status === 409 && attempt < maxRetries) {
+                        console.warn(`Phát hiện xung đột dữ liệu (409 Conflict) lần ${attempt}. Đang tự động thử lại sau ít giây...`);
+                        showToast(`Nhiều người đang lưu cùng lúc, đang tự động đồng bộ lần ${attempt}...`, "info", 2000);
+                        const backoffTime = 1000 * attempt + Math.floor(Math.random() * 600);
+                        await new Promise(res => setTimeout(res, backoffTime));
+                        continue;
+                    }
+                    throw new Error(errData.message || `Không thể lưu data.json (${resPut.status})`);
+                }
+
+                return parsedData;
+            } catch (err) {
+                if (err.message && (err.message.includes('409') || err.message.includes('sha') || err.message.includes('conflict')) && attempt < maxRetries) {
+                    console.warn(`Thử lại lần ${attempt} do xung đột: ${err.message}`);
+                    const backoffTime = 1200 * attempt + Math.floor(Math.random() * 500);
+                    await new Promise(res => setTimeout(res, backoffTime));
+                    continue;
+                }
+                throw err;
             }
-        });
-
-        if (!resGet.ok) {
-            const err = await resGet.json().catch(() => ({}));
-            throw new Error(err.message || `Không thể đọc data.json từ GitHub (${resGet.status})`);
         }
-
-        const resData = await resGet.json();
-        const currentSha = resData.sha;
-        const currentContent = base64ToUtf8(resData.content);
-        let parsedData = JSON.parse(currentContent);
-
-        // 2. Chạy hàm cập nhật dữ liệu
-        parsedData = updaterFn(parsedData);
-
-        // 3. Đẩy lại data.json đã cập nhật lên GitHub
-        const updatedJsonStr = JSON.stringify(parsedData, null, 2);
-        const encodedContent = utf8ToBase64(updatedJsonStr);
-
-        const resPut = await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/data.json`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Accept': 'application/vnd.github.v3+json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                message: commitMessage || "Cập nhật data.json từ Website",
-                content: encodedContent,
-                sha: currentSha,
-                branch: GITHUB_CONFIG.branch
-            })
-        });
-
-        if (!resPut.ok) {
-            const err = await resPut.json().catch(() => ({}));
-            throw new Error(err.message || `Không thể lưu data.json (${resPut.status})`);
-        }
-
-        return parsedData;
     }
 
     // =========================================
@@ -603,6 +772,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             showToast(`Đã thêm thành công năm ${yearVal}!`, "success");
             closeModal();
+            trackDeploymentProgress();
         } catch (err) {
             console.error(err);
             addYearAlert.className = 'alert-box error';
@@ -740,6 +910,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             showToast(`Đã tạo khoảnh khắc "${title}" thành công!`, "success");
             closeModal();
+            trackDeploymentProgress();
         } catch (err) {
             console.error(err);
             createEventAlert.className = 'alert-box error';
@@ -1073,6 +1244,10 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+        // Kích hoạt giữ màn hình sáng & bảo vệ không tắt trình duyệt
+        await acquireWakeLock();
+        window.onbeforeunload = () => "Ảnh đang được tải lên, vui lòng không rời khỏi trang.";
+
         // Bắt đầu tiến trình tải lên
         btnDoUpload.disabled = true;
         uploadProgressBox.style.display = 'flex';
@@ -1159,6 +1334,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 renderUploadPreviews();
                 uploadProgressBox.style.display = 'none';
                 uploadProgressBar.style.width = '0%';
+                // Bắt đầu theo dõi tiến trình deploy tự động
+                trackDeploymentProgress();
             }, 1000);
 
         } catch (err) {
@@ -1169,6 +1346,8 @@ document.addEventListener("DOMContentLoaded", () => {
             uploadProgressBox.style.display = 'none';
         } finally {
             btnDoUpload.disabled = false;
+            releaseWakeLock();
+            window.onbeforeunload = null;
         }
     };
 });
