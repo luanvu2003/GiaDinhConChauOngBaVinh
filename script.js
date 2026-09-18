@@ -318,7 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
-    fetch('data.json')
+    fetch(`data.json?v=${Date.now()}`, { cache: 'no-store' })
         .then(res => res.json())
         .then(data => {
             allData = data.sort((a, b) => b.year - a.year);
@@ -385,7 +385,20 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    function openDetail(event) {
+    function openDetail(eventOrId) {
+        let event = null;
+        if (typeof eventOrId === 'string') {
+            for (const y of allData) {
+                const found = (y.events || []).find(e => e.id === eventOrId);
+                if (found) { event = found; break; }
+            }
+        } else if (eventOrId && eventOrId.id) {
+            for (const y of allData) {
+                const found = (y.events || []).find(e => e.id === eventOrId.id);
+                if (found) { event = found; break; }
+            }
+        }
+        if (!event) event = eventOrId;
         currentEvent = event;
         detailHero.style.backgroundImage = `url('${event.cover}')`;
         detailTitle.innerText = event.title;
@@ -1131,18 +1144,11 @@ document.addEventListener("DOMContentLoaded", () => {
             uploadStatusText.textContent = 'Hoàn tất! Trang web sẽ tự động xuất bản trong 1–2 phút.';
 
             allData = updatedData;
+            renderGrid(activeYear || year);
 
             // Nếu đang mở trang chi tiết sự kiện này -> re-render ngay lập tức!
             if (currentEvent && currentEvent.id === eventId) {
-                const updatedEvent = allData
-                    .find(y => y.year === year)
-                    ?.events.find(e => e.id === eventId);
-
-                if (updatedEvent) {
-                    currentEvent = updatedEvent;
-                    renderDetailGroups(currentEvent);
-                    renderDetailGallery(currentEvent);
-                }
+                openDetail(eventId);
             }
 
             showToast(`Đã tải lên thành công ${totalFiles} ảnh!`, "success", 4500);
