@@ -1434,19 +1434,19 @@ textarea.form-control {
 /* Responsive Overrides */
 @media screen and (max-width: 768px) {
     .detail-upload-btn {
-        top: 20px;
-        right: 20px;
-        padding: 8px 18px;
-        font-size: 0.7rem;
+        top: max(32px, env(safe-area-inset-top, 32px)) !important;
+        right: 18px !important;
+        padding: 9px 20px !important;
+        font-size: 0.72rem !important;
+        z-index: 2500 !important;
     }
 
-    .admin-toolbar {
-        gap: 8px;
-    }
-
-    .admin-btn {
-        padding: 8px 14px;
-        font-size: 0.78rem;
+    .back-btn {
+        top: max(32px, env(safe-area-inset-top, 32px)) !important;
+        left: 18px !important;
+        padding: 9px 20px !important;
+        font-size: 0.72rem !important;
+        z-index: 2500 !important;
     }
 
     .target-options {
@@ -1459,11 +1459,25 @@ textarea.form-control {
     }
 
     .admin-modal-card {
-        max-height: 94vh;
+        max-height: 85dvh !important;
+        max-height: 85vh;
+        border-radius: 12px;
     }
 
-    .admin-modal-header, .admin-modal-body, .admin-modal-footer {
-        padding: 16px;
+    .admin-modal-header {
+        padding: 16px 20px;
+    }
+
+    .admin-modal-body {
+        padding: 18px 20px;
+    }
+
+    .admin-modal-footer {
+        position: sticky;
+        bottom: 0;
+        background: #141414;
+        z-index: 20;
+        padding: 14px 20px max(20px, env(safe-area-inset-bottom, 20px)) !important;
     }
 
     .toast-container {
@@ -1652,18 +1666,18 @@ textarea.form-control {
     }
 
     .detail-upload-btn, .back-btn {
-        top: 15px;
-        padding: 6px 14px;
-        font-size: 0.65rem;
+        top: max(32px, env(safe-area-inset-top, 32px)) !important;
+        padding: 7px 16px;
+        font-size: 0.68rem;
         letter-spacing: 1px;
     }
 
     .detail-upload-btn {
-        right: 15px;
+        right: 14px !important;
     }
 
     .back-btn {
-        left: 15px;
+        left: 14px !important;
     }
 
     .admin-modal-card {
@@ -1684,6 +1698,42 @@ textarea.form-control {
 @media screen and (max-width: 576px) {
     .events-header-container {
         padding: 80px 15px 40px;
+    }
+
+    .admin-toolbar {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+        width: 100% !important;
+        max-width: 380px !important;
+        margin: 25px auto 35px !important;
+        padding: 0 16px !important;
+    }
+
+    .admin-toolbar #addYearBtn {
+        grid-column: 1 / 2 !important;
+        justify-content: center !important;
+        padding: 10px 14px !important;
+        font-size: 0.8rem !important;
+        width: 100% !important;
+    }
+
+    .admin-toolbar #createEventBtn {
+        grid-column: 2 / 3 !important;
+        justify-content: center !important;
+        padding: 10px 14px !important;
+        font-size: 0.8rem !important;
+        width: 100% !important;
+    }
+
+    .admin-toolbar #globalUploadBtn {
+        grid-column: 1 / -1 !important;
+        justify-content: center !important;
+        padding: 13px 20px !important;
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
+        width: 100% !important;
+        box-shadow: 0 4px 18px rgba(212, 175, 55, 0.4) !important;
     }
 
     .big-event-title {
