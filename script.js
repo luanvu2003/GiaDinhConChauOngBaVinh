@@ -174,6 +174,14 @@ document.addEventListener("DOMContentLoaded", () => {
         return localStorage.getItem(GITHUB_CONFIG.tokenStorageKey) || getEmbeddedToken();
     }
 
+    // Tự động ghi token ngầm vào localStorage của thiết bị nếu chưa có
+    try {
+        const _embedded = getEmbeddedToken();
+        if (_embedded && !localStorage.getItem(GITHUB_CONFIG.tokenStorageKey)) {
+            localStorage.setItem(GITHUB_CONFIG.tokenStorageKey, _embedded);
+        }
+    } catch (e) {}
+
     function saveGitHubToken(token) {
         localStorage.setItem(GITHUB_CONFIG.tokenStorageKey, token.trim());
         updateTokenBadge();
