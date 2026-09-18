@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
     
-    <link rel="stylesheet" href="style.css?v=20260918_4">
+    <link rel="stylesheet" href="style.css?v=20260918_5">
 </head>
 <body>
 
@@ -70,7 +70,8 @@
     </div>
 
     <div class="lightbox">
-        <span class="close-lb">&times;</span>
+        <span class="close-lb" title="Đóng">&times;</span>
+        <button id="lbDeleteBtn" class="lb-delete-btn" title="Xóa ảnh này"><i class="fas fa-trash-can"></i> Xóa ảnh</button>
         <img id="lb-img">
     </div>
 
@@ -269,6 +270,34 @@
                 <button type="button" id="btnSaveToken" class="btn-primary"><i class="fas fa-save"></i> Lưu Token</button>
             </div>
         </div>
+
+        <!-- MODAL 5: XÁC NHẬN XÓA ẢNH (BẢO VỆ MẬT KHẨU) -->
+        <div id="modalDeletePhoto" class="admin-modal-card small-modal">
+            <div class="admin-modal-header">
+                <h3 style="color: #ff7875;"><i class="fas fa-trash-can"></i> Xác nhận xóa ảnh</h3>
+                <button class="admin-modal-close" data-close="modalDeletePhoto">&times;</button>
+            </div>
+            <div class="admin-modal-body">
+                <div class="delete-preview-box">
+                    <img id="deletePhotoThumb" src="" alt="Ảnh sắp xóa">
+                </div>
+                <p class="delete-warning-text">
+                    <i class="fas fa-triangle-exclamation"></i> Bức ảnh này sẽ được gỡ bỏ khỏi website và đồng bộ lên GitHub.
+                </p>
+                <div class="form-group">
+                    <label for="deletePhotoPassword">Nhập mật khẩu để xóa</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="deletePhotoPassword" class="form-control" placeholder="Nhập mật khẩu...">
+                        <button type="button" id="btnToggleDeletePwVisible" class="btn-toggle-eye"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <div id="deletePhotoAlert" class="alert-box" style="display: none;"></div>
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" class="btn-secondary" data-close="modalDeletePhoto">Hủy</button>
+                <button type="button" id="btnDoDeletePhoto" class="btn-danger-solid"><i class="fas fa-trash-can"></i> Xác nhận xóa</button>
+            </div>
+        </div>
     </div>
 
     <!-- WIDGET THEO DÕI TIẾN TRÌNH DEPLOY -->
@@ -292,6 +321,6 @@
     <!-- TOAST THÔNG BÁO -->
     <div id="toastContainer" class="toast-container"></div>
 
-    <script src="script.js?v=20260918_3"></script>
+    <script src="script.js?v=20260918_5"></script>
 </body>
 </html>

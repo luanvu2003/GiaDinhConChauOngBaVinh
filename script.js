@@ -24,6 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
     let allData = [];
     let activeYear = null;
     let currentEvent = null;
+    let currentViewedImageUrl = '';
+    const ADMIN_DELETE_PASSWORD = 'vinh2026';
     let selectedUploadFiles = [];
     let selectedCoverFile = null;
 
@@ -47,6 +49,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const lightbox = document.querySelector('.lightbox');
     const lbImg = document.querySelector('#lb-img');
     const closeLb = document.querySelector('.close-lb');
+    const lbDeleteBtn = document.getElementById('lbDeleteBtn');
     const scrollTopBtn = document.getElementById('scrollToTop');
 
     // Modal Elements
@@ -55,6 +58,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const modalCreateEvent = document.getElementById('modalCreateEvent');
     const modalAddYear = document.getElementById('modalAddYear');
     const modalToken = document.getElementById('modalToken');
+    const modalDeletePhoto = document.getElementById('modalDeletePhoto');
+    const deletePhotoThumb = document.getElementById('deletePhotoThumb');
+    const deletePhotoPassword = document.getElementById('deletePhotoPassword');
+    const btnToggleDeletePwVisible = document.getElementById('btnToggleDeletePwVisible');
+    const deletePhotoAlert = document.getElementById('deletePhotoAlert');
+    const btnDoDeletePhoto = document.getElementById('btnDoDeletePhoto');
 
     // Toolbar Buttons
     const addYearBtn = document.getElementById('addYearBtn');
@@ -235,6 +244,46 @@ document.addEventListener("DOMContentLoaded", () => {
             throw new Error(errData.message || `Lỗi tải lên file (${res.status})`);
         }
         return await res.json();
+    }
+
+    async function deleteFileFromGitHub(rawPath, commitMessage) {
+        const token = getGitHubToken();
+        if (!token) return;
+
+        let cleanPath = rawPath.replace(/^\.?\//, '');
+        if (cleanPath.startsWith('http://') || cleanPath.startsWith('https://')) {
+            return;
+        }
+
+        try {
+            const getUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${cleanPath}?ref=${GITHUB_CONFIG.branch}`;
+            const resGet = await fetch(getUrl, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+            if (!resGet.ok) return;
+            const fileInfo = await resGet.json();
+            if (!fileInfo.sha) return;
+
+            const delUrl = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${cleanPath}`;
+            await fetch(delUrl, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: commitMessage || `Xóa file ${cleanPath}`,
+                    sha: fileInfo.sha,
+                    branch: GITHUB_CONFIG.branch
+                })
+            });
+        } catch (err) {
+            console.warn('Không thể xóa file vật lý trên GitHub:', err);
+        }
     }
 
     // =========================================
@@ -465,7 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // =========================================
     function openModal(modalEl) {
         // Đóng các modal khác nếu đang mở
-        [modalUpload, modalCreateEvent, modalAddYear, modalToken].forEach(m => {
+        [modalUpload, modalCreateEvent, modalAddYear, modalToken, modalDeletePhoto].forEach(m => {
             if (m) m.classList.remove('active');
         });
 
@@ -476,7 +525,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function closeModal() {
         adminModalOverlay.classList.remove('active');
-        [modalUpload, modalCreateEvent, modalAddYear, modalToken].forEach(m => {
+        [modalUpload, modalCreateEvent, modalAddYear, modalToken, modalDeletePhoto].forEach(m => {
             if (m) m.classList.remove('active');
         });
         if (detailView.style.display !== 'block') {
@@ -682,11 +731,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Lightbox
     window.viewImage = (url) => {
+        currentViewedImageUrl = url;
         lbImg.src = url;
         lightbox.style.display = 'flex';
     };
-    closeLb.onclick = () => lightbox.style.display = 'none';
-    lightbox.onclick = (e) => { if (e.target === lightbox) lightbox.style.display = 'none'; };
+    closeLb.onclick = () => {
+        lightbox.style.display = 'none';
+        currentViewedImageUrl = '';
+    };
+    lightbox.onclick = (e) => {
+        if (e.target === lightbox) {
+            lightbox.style.display = 'none';
+            currentViewedImageUrl = '';
+        }
+    };
 
     // =========================================
     // 6. XỬ LÝ CÀI ĐẶT GITHUB TOKEN
@@ -1365,4 +1423,163 @@ document.addEventListener("DOMContentLoaded", () => {
             window.onbeforeunload = null;
         }
     };
+
+    // =========================================
+    // 10. XỬ LÝ XÓA ẢNH (BẢO VỆ BẰNG MẬT KHẨU)
+    // =========================================
+    if (lbDeleteBtn) {
+        lbDeleteBtn.onclick = () => {
+            if (!currentViewedImageUrl) return;
+            if (deletePhotoThumb) deletePhotoThumb.src = currentViewedImageUrl;
+            if (deletePhotoPassword) {
+                deletePhotoPassword.value = '';
+                deletePhotoPassword.type = 'password';
+            }
+            if (btnToggleDeletePwVisible) {
+                btnToggleDeletePwVisible.innerHTML = '<i class="fas fa-eye"></i>';
+            }
+            if (deletePhotoAlert) {
+                deletePhotoAlert.style.display = 'none';
+                deletePhotoAlert.innerHTML = '';
+            }
+            if (btnDoDeletePhoto) {
+                btnDoDeletePhoto.disabled = false;
+                btnDoDeletePhoto.innerHTML = '<i class="fas fa-trash-can"></i> Xác nhận xóa';
+            }
+            openModal(modalDeletePhoto);
+            setTimeout(() => {
+                if (deletePhotoPassword) deletePhotoPassword.focus();
+            }, 250);
+        };
+    }
+
+    if (btnToggleDeletePwVisible) {
+        btnToggleDeletePwVisible.onclick = () => {
+            const isPw = deletePhotoPassword.type === 'password';
+            deletePhotoPassword.type = isPw ? 'text' : 'password';
+            btnToggleDeletePwVisible.innerHTML = isPw ? '<i class="fas fa-eye-slash"></i>' : '<i class="fas fa-eye"></i>';
+        };
+    }
+
+    if (deletePhotoPassword) {
+        deletePhotoPassword.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (btnDoDeletePhoto) btnDoDeletePhoto.click();
+            }
+        });
+    }
+
+    if (btnDoDeletePhoto) {
+        btnDoDeletePhoto.onclick = async () => {
+            const entered = (deletePhotoPassword ? deletePhotoPassword.value : '').trim();
+            if (!entered) {
+                if (deletePhotoAlert) {
+                    deletePhotoAlert.className = 'alert-box alert-error';
+                    deletePhotoAlert.innerHTML = '<i class="fas fa-circle-exclamation"></i> Vui lòng nhập mật khẩu để xóa!';
+                    deletePhotoAlert.style.display = 'block';
+                }
+                if (deletePhotoPassword) deletePhotoPassword.focus();
+                return;
+            }
+
+            if (entered.toLowerCase() !== ADMIN_DELETE_PASSWORD.toLowerCase()) {
+                if (deletePhotoAlert) {
+                    deletePhotoAlert.className = 'alert-box alert-error';
+                    deletePhotoAlert.innerHTML = '<i class="fas fa-circle-xmark"></i> Mật khẩu không chính xác! Vui lòng thử lại.';
+                    deletePhotoAlert.style.display = 'block';
+                }
+                if (deletePhotoPassword) deletePhotoPassword.select();
+                return;
+            }
+
+            if (!ensureTokenBeforeAction()) return;
+
+            try {
+                btnDoDeletePhoto.disabled = true;
+                btnDoDeletePhoto.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xóa...';
+                if (deletePhotoAlert) {
+                    deletePhotoAlert.className = 'alert-box alert-info';
+                    deletePhotoAlert.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang cập nhật dữ liệu và đồng bộ lên GitHub...';
+                    deletePhotoAlert.style.display = 'block';
+                }
+
+                const targetUrl = currentViewedImageUrl;
+                let removedCount = 0;
+
+                const updatedData = await updateDataJsonOnGitHub((currentJson) => {
+                    currentJson.forEach(yearItem => {
+                        if (!yearItem.events) return;
+                        yearItem.events.forEach(evt => {
+                            // 1. Gỡ trong general_photos
+                            if (evt.general_photos && Array.isArray(evt.general_photos)) {
+                                const prevLen = evt.general_photos.length;
+                                evt.general_photos = evt.general_photos.filter(p => p !== targetUrl);
+                                if (evt.general_photos.length < prevLen) {
+                                    removedCount += (prevLen - evt.general_photos.length);
+                                }
+                            }
+                            // 2. Gỡ trong groups (Đại Gia Đình)
+                            if (evt.groups && Array.isArray(evt.groups)) {
+                                evt.groups.forEach(grp => {
+                                    if (grp.photos && Array.isArray(grp.photos)) {
+                                        const prevLen = grp.photos.length;
+                                        grp.photos = grp.photos.filter(p => p !== targetUrl);
+                                        if (grp.photos.length < prevLen) {
+                                            removedCount += (prevLen - grp.photos.length);
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    });
+                    return currentJson;
+                }, `Xóa ảnh ${targetUrl.split('/').pop()}`);
+
+                // Cập nhật bộ nhớ cục bộ
+                allData = updatedData;
+
+                // Xóa file vật lý trên GitHub repo nếu có
+                deleteFileFromGitHub(targetUrl, `Xóa file ảnh ${targetUrl.split('/').pop()}`).catch(console.warn);
+
+                // Cập nhật lại giao diện chi tiết nếu đang mở
+                if (currentEvent) {
+                    let freshEvent = null;
+                    allData.forEach(y => {
+                        if (y.events) {
+                            const found = y.events.find(e => e.id === currentEvent.id);
+                            if (found) freshEvent = found;
+                        }
+                    });
+                    if (freshEvent) {
+                        currentEvent = freshEvent;
+                        renderDetailGroups(freshEvent);
+                        renderDetailGallery(freshEvent);
+                    }
+                }
+
+                renderGrid(activeYear);
+
+                // Đóng modal và lightbox
+                closeModal();
+                lightbox.style.display = 'none';
+                currentViewedImageUrl = '';
+
+                showToast("Đã xóa ảnh thành công!", "success", 4000);
+
+                // Bắt đầu theo dõi deploy tự động
+                trackDeploymentProgress();
+
+            } catch (err) {
+                console.error("Lỗi xóa ảnh:", err);
+                if (deletePhotoAlert) {
+                    deletePhotoAlert.className = 'alert-box alert-error';
+                    deletePhotoAlert.innerHTML = `<i class="fas fa-circle-exclamation"></i> Lỗi: ${err.message || 'Không thể xóa ảnh'}`;
+                    deletePhotoAlert.style.display = 'block';
+                }
+                btnDoDeletePhoto.disabled = false;
+                btnDoDeletePhoto.innerHTML = '<i class="fas fa-trash-can"></i> Xác nhận xóa';
+            }
+        };
+    }
 });

@@ -576,11 +576,46 @@ body {
     font-size: 2rem;
     cursor: pointer;
     transition: 0.3s;
+    z-index: 5010;
 }
 
 .close-lb:hover {
     color: var(--gold);
     transform: rotate(90deg);
+}
+
+.lb-delete-btn {
+    position: absolute;
+    top: max(28px, env(safe-area-inset-top, 28px));
+    left: max(28px, env(safe-area-inset-left, 28px));
+    background: rgba(220, 38, 38, 0.25);
+    color: #ff7875;
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    z-index: 5010;
+}
+
+.lb-delete-btn:hover {
+    background: linear-gradient(135deg, #e53935 0%, #b71c1c 100%);
+    color: #ffffff;
+    border-color: #ff4d4f;
+    box-shadow: 0 4px 18px rgba(229, 57, 53, 0.5);
+    transform: translateY(-2px);
+}
+
+.lb-delete-btn:active {
+    transform: translateY(0);
 }
 
 @keyframes float {
@@ -1273,6 +1308,72 @@ textarea.form-control {
     background: rgba(255, 77, 79, 0.15);
 }
 
+.btn-danger-solid {
+    background: linear-gradient(135deg, #e53935 0%, #b71c1c 100%);
+    color: #fff;
+    font-weight: 600;
+    border: 1px solid #ef5350;
+    border-radius: 30px;
+    padding: 10px 22px;
+    font-size: 0.85rem;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-danger-solid:hover {
+    background: linear-gradient(135deg, #f44336 0%, #c62828 100%);
+    box-shadow: 0 4px 16px rgba(229, 57, 53, 0.45);
+    transform: translateY(-2px);
+}
+
+.btn-danger-solid:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Delete modal specific components */
+.delete-preview-box {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 10px;
+    border: 1px dashed rgba(255, 120, 117, 0.35);
+    margin-bottom: 14px;
+}
+
+.delete-preview-box img {
+    max-width: 100%;
+    max-height: 160px;
+    border-radius: 6px;
+    object-fit: contain;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.6);
+}
+
+.delete-warning-text {
+    font-size: 0.84rem;
+    color: #ff9c6e;
+    line-height: 1.5;
+    background: rgba(255, 77, 79, 0.1);
+    padding: 10px 14px;
+    border-radius: 8px;
+    border-left: 3px solid #ff4d4f;
+    margin-bottom: 16px;
+}
+
+.delete-warning-text i {
+    color: #ff4d4f;
+    margin-right: 6px;
+}
+
 /* Password wrapper & Token Guide */
 .password-wrapper {
     position: relative;
@@ -1789,6 +1890,19 @@ textarea.form-control {
 
     .target-options {
         grid-template-columns: 1fr;
+    }
+
+    .lb-delete-btn {
+        top: max(20px, env(safe-area-inset-top, 20px));
+        left: max(16px, env(safe-area-inset-left, 16px));
+        padding: 7px 14px;
+        font-size: 0.8rem;
+    }
+
+    .close-lb {
+        top: max(16px, env(safe-area-inset-top, 16px));
+        right: max(20px, env(safe-area-inset-right, 20px));
+        font-size: 2.2rem;
     }
 }
 
