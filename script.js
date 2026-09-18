@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let activeYear = null;
     let currentEvent = null;
     let currentViewedImageUrl = '';
-    const ADMIN_DELETE_PASSWORD = 'vinh2026';
+    const ADMIN_DELETE_PASSWORD = 'luanvu2003';
     let selectedUploadFiles = [];
     let selectedCoverFile = null;
 
