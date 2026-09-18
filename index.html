@@ -33,6 +33,12 @@
         <h2 class="big-event-title">Sự Kiện</h2>
         <div class="separator-line"></div>
         <div class="nav-year"></div>
+        <div class="admin-toolbar">
+            <button id="addYearBtn" class="admin-btn" title="Thêm năm mới"><i class="fas fa-calendar-plus"></i> Thêm năm</button>
+            <button id="createEventBtn" class="admin-btn" title="Tạo sự kiện khoảnh khắc cho năm đang xem"><i class="fas fa-plus-circle"></i> Tạo khoảnh khắc</button>
+            <button id="globalUploadBtn" class="admin-btn upload-highlight" title="Tải ảnh lên"><i class="fas fa-arrow-up-from-bracket"></i> Tải lên</button>
+            <button id="tokenConfigBtn" class="admin-btn icon-only" title="Cài đặt GitHub Token"><i class="fas fa-key"></i></button>
+        </div>
     </div>
 
     <div class="grid-events">
@@ -44,6 +50,7 @@
 
     <div class="detail-view">
         <button class="back-btn"><i class="fas fa-arrow-left"></i> Quay lại</button>
+        <button id="detailUploadBtn" class="detail-upload-btn"><i class="fas fa-arrow-up-from-bracket"></i> Tải lên</button>
 
         <header class="detail-hero">
             <div class="hero-overlay"></div>
@@ -66,6 +73,202 @@
         <span class="close-lb">&times;</span>
         <img id="lb-img">
     </div>
+
+    <!-- HỆ THỐNG MODAL QUẢN TRỊ & TẢI ẢNH -->
+    <div id="adminModalOverlay" class="admin-modal-overlay">
+        <!-- MODAL 1: TẢI ẢNH LÊN -->
+        <div id="modalUpload" class="admin-modal-card">
+            <div class="admin-modal-header">
+                <h3><i class="fas fa-arrow-up-from-bracket"></i> Tải ảnh lên</h3>
+                <button class="admin-modal-close" data-close="modalUpload">&times;</button>
+            </div>
+            <div class="admin-modal-body">
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="uploadYearSelect">Năm</label>
+                        <select id="uploadYearSelect" class="form-control"></select>
+                    </div>
+                    <div class="form-group flex-2">
+                        <label for="uploadEventSelect">Sự kiện / Khoảnh khắc</label>
+                        <select id="uploadEventSelect" class="form-control"></select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Vị trí tải ảnh lên</label>
+                    <div class="target-options">
+                        <label class="target-radio-card active" id="targetGeneralLabel">
+                            <input type="radio" name="uploadTarget" id="targetGeneral" value="general" checked>
+                            <div class="radio-content">
+                                <span class="radio-title"><i class="fas fa-images"></i> Khoảnh khắc chung</span>
+                                <span class="radio-desc">Tải ảnh sự kiện đại gia đình (Không giới hạn)</span>
+                            </div>
+                        </label>
+                        <label class="target-radio-card" id="targetGroupLabel">
+                            <input type="radio" name="uploadTarget" id="targetGroup" value="group">
+                            <div class="radio-content">
+                                <span class="radio-title"><i class="fas fa-users"></i> Ảnh từng gia đình</span>
+                                <span class="radio-desc">Tối đa 4 ảnh cho mỗi gia đình</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="groupSelectContainer" class="form-group" style="display: none;">
+                    <div class="group-select-header">
+                        <label for="uploadGroupSelect">Chọn gia đình</label>
+                        <span id="groupPhotoBadge" class="count-badge">Hiện có: 0/4 ảnh</span>
+                    </div>
+                    <select id="uploadGroupSelect" class="form-control"></select>
+                </div>
+
+                <div class="form-group">
+                    <label>Chọn ảnh</label>
+                    <div id="uploadDropzone" class="upload-dropzone">
+                        <input type="file" id="photoFileInput" multiple accept="image/*" style="display:none;">
+                        <i class="fas fa-cloud-arrow-up drop-icon"></i>
+                        <p class="drop-text">Kéo thả ảnh vào đây hoặc <span class="browse-link">chọn từ thiết bị</span></p>
+                        <p class="drop-hint">Hỗ trợ JPG, PNG, WEBP (tự động tối ưu hoá ảnh nhẹ và sắc nét)</p>
+                    </div>
+                </div>
+
+                <div id="uploadPreviewContainer" class="upload-preview-container" style="display: none;">
+                    <div class="preview-header">
+                        <span>Danh sách ảnh đã chọn (<span id="previewCount">0</span>)</span>
+                        <button type="button" id="btnClearPreview" class="btn-text-danger">Xóa tất cả</button>
+                    </div>
+                    <div id="uploadPreviewGrid" class="upload-preview-grid"></div>
+                </div>
+
+                <div id="uploadAlert" class="alert-box" style="display: none;"></div>
+
+                <div id="uploadProgressBox" class="progress-box" style="display: none;">
+                    <div class="progress-bar-bg">
+                        <div id="uploadProgressBar" class="progress-bar-fill"></div>
+                    </div>
+                    <p id="uploadStatusText" class="progress-status-text">Đang tải lên...</p>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" class="btn-secondary" data-close="modalUpload">Hủy</button>
+                <button type="button" id="btnDoUpload" class="btn-primary"><i class="fas fa-arrow-up-from-bracket"></i> Tải lên</button>
+            </div>
+        </div>
+
+        <!-- MODAL 2: TẠO KHOẢNH KHẮC MỚI -->
+        <div id="modalCreateEvent" class="admin-modal-card">
+            <div class="admin-modal-header">
+                <h3><i class="fas fa-plus-circle"></i> Tạo khoảnh khắc mới</h3>
+                <button class="admin-modal-close" data-close="modalCreateEvent">&times;</button>
+            </div>
+            <div class="admin-modal-body">
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="eventYearSelect">Năm</label>
+                        <select id="eventYearSelect" class="form-control"></select>
+                    </div>
+                    <div class="form-group flex-2">
+                        <label for="eventTitleInput">Tên sự kiện / Khoảnh khắc *</label>
+                        <input type="text" id="eventTitleInput" class="form-control" placeholder="Ví dụ: Hội Xuân 2027, Mừng Thọ...">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group flex-1">
+                        <label for="eventIdInput">Mã định danh (ID) *</label>
+                        <input type="text" id="eventIdInput" class="form-control" placeholder="hoi-xuan-2027">
+                    </div>
+                    <div class="form-group flex-1">
+                        <label for="eventDateInput">Thời gian diễn ra *</label>
+                        <input type="text" id="eventDateInput" class="form-control" placeholder="17/02/2027 - 21/02/2027">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventDescInput">Mô tả khoảnh khắc</label>
+                    <textarea id="eventDescInput" class="form-control" rows="3" placeholder="Đôi lời ghi lại kỷ niệm quý giá của đại gia đình..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Ảnh bìa sự kiện (Cover) *</label>
+                    <div class="cover-input-tabs">
+                        <input type="file" id="eventCoverFileInput" accept="image/*" style="display: none;">
+                        <button type="button" id="btnSelectCoverFile" class="btn-outline-gold"><i class="fas fa-image"></i> Chọn ảnh bìa từ máy</button>
+                        <span id="coverFileName" class="cover-file-status">Chưa chọn ảnh</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventVideoIdInput">Video kỷ niệm Youtube (Tuỳ chọn)</label>
+                    <input type="text" id="eventVideoIdInput" class="form-control" placeholder="Dán link Youtube hoặc ID (ví dụ: hjYOanJelUs)">
+                </div>
+
+                <div id="createEventAlert" class="alert-box" style="display: none;"></div>
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" class="btn-secondary" data-close="modalCreateEvent">Hủy</button>
+                <button type="button" id="btnDoCreateEvent" class="btn-primary"><i class="fas fa-plus-circle"></i> Tạo khoảnh khắc</button>
+            </div>
+        </div>
+
+        <!-- MODAL 3: THÊM NĂM MỚI -->
+        <div id="modalAddYear" class="admin-modal-card small-modal">
+            <div class="admin-modal-header">
+                <h3><i class="fas fa-calendar-plus"></i> Thêm năm mới</h3>
+                <button class="admin-modal-close" data-close="modalAddYear">&times;</button>
+            </div>
+            <div class="admin-modal-body">
+                <div class="form-group">
+                    <label for="newYearInput">Nhập năm mới</label>
+                    <input type="number" id="newYearInput" class="form-control" placeholder="Ví dụ: 2027" min="1900" max="2100">
+                </div>
+                <div id="addYearAlert" class="alert-box" style="display: none;"></div>
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" class="btn-secondary" data-close="modalAddYear">Hủy</button>
+                <button type="button" id="btnDoAddYear" class="btn-primary"><i class="fas fa-check"></i> Thêm năm</button>
+            </div>
+        </div>
+
+        <!-- MODAL 4: CÀI ĐẶT GITHUB TOKEN -->
+        <div id="modalToken" class="admin-modal-card">
+            <div class="admin-modal-header">
+                <h3><i class="fas fa-key"></i> Cấu hình GitHub Token</h3>
+                <button class="admin-modal-close" data-close="modalToken">&times;</button>
+            </div>
+            <div class="admin-modal-body">
+                <p class="token-help-text">
+                    Để website tự động tải ảnh và lưu trữ lên GitHub Pages, bạn cần cung cấp <strong>Personal Access Token (PAT)</strong> có quyền <code>Contents: Read and Write</code> hoặc <code>repo</code>. Token này chỉ lưu trên trình duyệt của bạn và không chia sẻ cho người ngoài.
+                </p>
+                <div class="form-group">
+                    <label for="githubTokenInput">GitHub Personal Access Token</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="githubTokenInput" class="form-control" placeholder="ghp_... hoặc github_pat_...">
+                        <button type="button" id="btnToggleTokenVisible" class="btn-toggle-eye"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <div class="token-status-wrapper">
+                    <span>Trạng thái: </span>
+                    <span id="tokenStatusText" class="token-badge unconfigured">Chưa cấu hình</span>
+                </div>
+                <div class="token-guide">
+                    <p><strong>Cách lấy Token (chỉ mất 1 phút):</strong></p>
+                    <ol>
+                        <li>Truy cập <a href="https://github.com/settings/tokens" target="_blank">GitHub Tokens (Classic)</a> hoặc Fine-grained tokens.</li>
+                        <li>Tạo token mới, tích chọn quyền <code>repo</code> (hoặc Repository permissions: <code>Contents -> Read & Write</code>).</li>
+                        <li>Sao chép mã token và dán vào ô bên trên, sau đó bấm <strong>Lưu Token</strong>.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" id="btnClearToken" class="btn-danger-outline"><i class="fas fa-trash"></i> Xóa Token</button>
+                <button type="button" id="btnSaveToken" class="btn-primary"><i class="fas fa-save"></i> Lưu Token</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST THÔNG BÁO -->
+    <div id="toastContainer" class="toast-container"></div>
 
     <script src="script.js"></script>
 </body>
